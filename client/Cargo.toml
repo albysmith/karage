@@ -12,7 +12,7 @@ path = "src/lib.rs"
 
 [dependencies]
 seed = "^0.6.0"
-serde = "^1.0.103"
+
 wasm-bindgen = "^0.2.55"
 
 [dependencies.web-sys]
@@ -25,4 +25,6 @@ features = [
     "FileList",
     "FormData",
     "HtmlInputElement",
+    "CanvasRenderingContext2d",
+    "HtmlCanvasElement",
 ]

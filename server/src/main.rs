@@ -57,9 +57,10 @@ fn main() -> std::io::Result<()> {
     HttpServer::new(move || {
         App::new()
             // default logger settings
-            .wrap(Logger::default())
+            // .wrap(Logger::default())
             // this is how you set custom logs (see actix middleware for % notation)
             .wrap(Logger::new("server request: %a %t \"%r\" %s %b \"%{Referer}i\" \"%{User-Agent}i\" %T"))
+            .service(Files::new("/public", "./client/public"))
             .service(Files::new("/pkg", "./client/pkg"))
             .default_service(web::get().to(|req: HttpRequest| {
                 println!("app start {:?}", req);
