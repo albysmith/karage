@@ -1,0 +1,46 @@
+- Logging framework (backend)
+    - separate log file and proper setup
+    - development logging for all steps 
+    - regular day-to-day logging for production
+    - logging when things go wrong (flip on a switch for issues, but keep in production)
+    - need logger aggregator/parser/something????
+    - doctrine for how logs are generated
+    - need to pick what gets logged (important part of framework choices)
+    --- use slog
+        - slog_stdlog to convert regular log stuff to slog
+        - actix middleware logger as well
+    --- write our own log parser
+        - rust to parse the log into db
+        - web gui to read/display/search
+- Tests #[cfg(test)] or something like that
+    - write test for each function/assert outcomes/etc.
+    - doctrine for how to determine tests and expected outcomes
+    - test framework??????? auto-reloader in Actix as example
+    - type detection printout might be useful for us for now
+    - check to see what is broken from a library change
+- Find all methods for all ways of communication between server/client
+    - html
+    - client/server namespaces
+    - how you can possibly get info from one to the other, all options
+- Documentation of our shit
+- Understand each part of Seed
+    - App, Model, View, Update, Msg, Orders (more?)
+    - How do they work together?
+- How do we draw html and manipulate the page, etc.
+    - draw initial state of the page
+    - interoperate with existing html/js 
+    - how to inject isolated units (making/going to a new page)
+- Seed performance
+    - audits/flare graphs/fun stuff
+- Generic non-seed rust code hidden in the wasm
+
+- All the things we don't want to do in rust 
+    - css templates
+
+
+
+
+
+- Learn how to do JS stuff with the html (but in Seed)
+    - onclick
+    - make table
