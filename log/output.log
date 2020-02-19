@@ -1,18 +1,10 @@
-Feb 16 23:24:55.639 INFO Starting 6 workers
-Feb 16 23:24:55.641 INFO Starting server on 127.0.0.1:8000
-Feb 16 23:25:06.757 INFO server request: 127.0.0.1:49836 2020-02-16T23:25:06-06:00 "GET /public/text-polyfill.min.js HTTP/1.1" 200 2197 "http://127.0.0.1:8000/" "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:72.0) Gecko/20100101 Firefox/72.0" 0.008986
-Feb 16 23:25:06.757 INFO 127.0.0.1:49836 "GET /public/text-polyfill.min.js HTTP/1.1" 200 2197 "http://127.0.0.1:8000/" "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:72.0) Gecko/20100101 Firefox/72.0" 0.008986
-Feb 16 23:25:06.761 INFO server request: 127.0.0.1:49836 2020-02-16T23:25:06-06:00 "GET /pkg/package.js HTTP/1.1" 200 44978 "http://127.0.0.1:8000/" "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:72.0) Gecko/20100101 Firefox/72.0" 0.000000
-Feb 16 23:25:06.762 INFO 127.0.0.1:49836 "GET /pkg/package.js HTTP/1.1" 200 44978 "http://127.0.0.1:8000/" "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:72.0) Gecko/20100101 Firefox/72.0" 0.000000
-Feb 16 23:25:06.774 INFO server request: 127.0.0.1:49836 2020-02-16T23:25:06-06:00 "GET /pkg/package_bg.wasm HTTP/1.1" 200 1693133 "http://127.0.0.1:8000/" "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:72.0) Gecko/20100101 Firefox/72.0" 0.006981
-Feb 16 23:25:06.774 INFO 127.0.0.1:49836 "GET /pkg/package_bg.wasm HTTP/1.1" 200 1693133 "http://127.0.0.1:8000/" "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:72.0) Gecko/20100101 Firefox/72.0" 0.006981
-Feb 16 23:25:06.782 INFO server request: 127.0.0.1:49836 2020-02-16T23:25:06-06:00 "GET /favicon.ico HTTP/1.1" 200 660 "-" "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:72.0) Gecko/20100101 Firefox/72.0" 0.007979
-Feb 16 23:25:06.782 INFO 127.0.0.1:49836 "GET /favicon.ico HTTP/1.1" 200 660 "-" "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:72.0) Gecko/20100101 Firefox/72.0" 0.007979
-Feb 16 23:29:31.064 INFO server request: 127.0.0.1:49888 2020-02-16T23:29:31-06:00 "GET /public/text-polyfill.min.js HTTP/1.1" 304 0 "http://127.0.0.1:8000/" "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:72.0) Gecko/20100101 Firefox/72.0" 0.000974
-Feb 16 23:29:31.064 INFO 127.0.0.1:49888 "GET /public/text-polyfill.min.js HTTP/1.1" 304 0 "http://127.0.0.1:8000/" "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:72.0) Gecko/20100101 Firefox/72.0" 0.000974
-Feb 16 23:29:31.067 INFO server request: 127.0.0.1:49888 2020-02-16T23:29:31-06:00 "GET /pkg/package.js HTTP/1.1" 304 0 "http://127.0.0.1:8000/" "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:72.0) Gecko/20100101 Firefox/72.0" 0.000000
-Feb 16 23:29:31.067 INFO 127.0.0.1:49888 "GET /pkg/package.js HTTP/1.1" 304 0 "http://127.0.0.1:8000/" "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:72.0) Gecko/20100101 Firefox/72.0" 0.000000
-Feb 16 23:29:31.076 INFO server request: 127.0.0.1:49888 2020-02-16T23:29:31-06:00 "GET /pkg/package_bg.wasm HTTP/1.1" 304 0 "http://127.0.0.1:8000/" "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:72.0) Gecko/20100101 Firefox/72.0" 0.000000
-Feb 16 23:29:31.076 INFO 127.0.0.1:49888 "GET /pkg/package_bg.wasm HTTP/1.1" 304 0 "http://127.0.0.1:8000/" "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:72.0) Gecko/20100101 Firefox/72.0" 0.000000
-Feb 16 23:29:31.091 INFO server request: 127.0.0.1:49888 2020-02-16T23:29:31-06:00 "GET /favicon.ico HTTP/1.1" 200 660 "-" "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:72.0) Gecko/20100101 Firefox/72.0" 0.012965
-Feb 16 23:29:31.091 INFO 127.0.0.1:49888 "GET /favicon.ico HTTP/1.1" 200 660 "-" "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:72.0) Gecko/20100101 Firefox/72.0" 0.012965
+Feb 19 00:46:37.082 INFO Starting 6 workers
+Feb 19 00:46:37.083 INFO Starting server on 127.0.0.1:8000
+Feb 19 00:46:39.456 INFO server request: 127.0.0.1:51780 2020-02-19T00:46:39-06:00 "GET / HTTP/1.1" 304 0 "-" "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:72.0) Gecko/20100101 Firefox/72.0" 0.009973
+Feb 19 00:46:39.465 INFO server request: 127.0.0.1:51782 2020-02-19T00:46:39-06:00 "GET /public/text-polyfill.min.js HTTP/1.1" 304 0 "http://127.0.0.1:8000/" "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:72.0) Gecko/20100101 Firefox/72.0" 0.000997
+Feb 19 00:46:39.470 INFO server request: 127.0.0.1:51781 2020-02-19T00:46:39-06:00 "GET /pkg/package.js HTTP/1.1" 200 44071 "http://127.0.0.1:8000/" "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:72.0) Gecko/20100101 Firefox/72.0" 0.001995
+Feb 19 00:46:39.481 INFO server request: 127.0.0.1:51781 2020-02-19T00:46:39-06:00 "GET /pkg/package_bg.wasm HTTP/1.1" 200 1744203 "http://127.0.0.1:8000/" "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:72.0) Gecko/20100101 Firefox/72.0" 0.006981
+Feb 19 00:47:05.158 INFO server request: 127.0.0.1:51784 2020-02-19T00:47:05-06:00 "GET / HTTP/1.1" 304 0 "-" "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:72.0) Gecko/20100101 Firefox/72.0" 0.010991
+Feb 19 00:47:05.173 INFO server request: 127.0.0.1:51785 2020-02-19T00:47:05-06:00 "GET /public/text-polyfill.min.js HTTP/1.1" 304 0 "http://127.0.0.1:8000/" "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:72.0) Gecko/20100101 Firefox/72.0" 0.000997
+Feb 19 00:47:05.182 INFO server request: 127.0.0.1:51786 2020-02-19T00:47:05-06:00 "GET /pkg/package.js HTTP/1.1" 304 0 "http://127.0.0.1:8000/" "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:72.0) Gecko/20100101 Firefox/72.0" 0.000998
+Feb 19 00:47:05.190 INFO server request: 127.0.0.1:51785 2020-02-19T00:47:05-06:00 "GET /pkg/package_bg.wasm HTTP/1.1" 304 0 "http://127.0.0.1:8000/" "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:72.0) Gecko/20100101 Firefox/72.0" 0.000000

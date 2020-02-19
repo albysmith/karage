@@ -1,9 +1,20 @@
-//! [Web-sys docs](https://rustwasm.github.io/wasm-bindgen/api/web_sys/struct.CanvasRenderingContext2d.html)
-//! [Web-sys example](https://rustwasm.github.io/wasm-bindgen/examples/2d-canvas.html)
-//! [MDN](https://developer.mozilla.org/en-US/docs/Web/API/CanvasRenderingContext2D/drawWindow)
+#![allow(clippy::non_ascii_literal)]
 
+use gloo_timers::future::TimeoutFuture;
 use seed::{prelude::*, *};
-use web_sys::HtmlCanvasElement;
+
+
+// HOW THIS SHIT WORKS
+//  - view function = render html on screen
+//  - update function = change shit and re-render the page
+//      - orders have a few options that you can use in the update function
+//          .skip() tells it not to re-render the page this time
+//          .send_msg(Msg::ENUMOPTION) tells it to send this other message type from the enum options
+//          .perform_cmd(FUNCTIONNAME(PARAMS)) tells it to run this function
+//          there are more in the link I sent you for the orders docs
+//  - Model struct = info that you might want to render, and flags to help you decide how to render it 
+//      - you might not actually need to save the table data in the model
+
 
 // ------ ------
 //     Model
@@ -11,79 +22,63 @@ use web_sys::HtmlCanvasElement;
 
 #[derive(Default)]
 struct Model {
-    fill_color: Color,
-    canvas: ElRef<HtmlCanvasElement>,
+    title: String,
+    greet_clicked: bool,
+    table: TableData,
 }
 
-#[derive(Copy, Clone, PartialEq, Eq)]
-enum Color {
-    A,
-    B,
+#[derive(Default)]
+struct TableData {
+    headers: Vec<String>,
+    entries: Vec<TableEntry>,
 }
 
-impl Color {
-    fn as_str(&self) -> &str {
-        match self {
-            Self::A => "white",
-            Self::B => "green",
-        }
-    }
-}
-
-impl Default for Color {
-    fn default() -> Self {
-        Self::A
-    }
-}
-
-// ------ ------
-//  After Mount
-// ------ ------
-
-fn after_mount(_: Url, orders: &mut impl Orders<Msg>) -> AfterMount<Model> {
-    orders.after_next_render(|_| Msg::Rendered);
-    AfterMount::default()
+#[derive(Default)]
+struct TableEntry {
+    data: Vec<String>,
 }
 
 // ------ ------
 //    Update
 // ------ ------
 
-#[derive(Copy, Clone)]
 enum Msg {
-    Rendered,
-    ChangeColor,
+    Greet,
+    WriteHello,
+    WriteName(String),
+    WriteExclamationMarks,
+    WriteEmoticon(String),
 }
 
 fn update(msg: Msg, model: &mut Model, orders: &mut impl Orders<Msg>) {
     match msg {
-        Msg::Rendered => {
-            draw(&model.canvas, model.fill_color);
-            // We want to call `.skip` to prevent infinite loop.
-            // (Infinite loops are useful for animations.)
-            orders.after_next_render(|_| Msg::Rendered).skip();
+        Msg::Greet => {
+            model.greet_clicked = true;
+            // this just adds something to the table headers vec so that something can display
+            // see view function below; i'm not actually rendering a table into the html yet
+            model.table.headers.push("World Header".into());
+            orders
+                .skip()
+                .send_msg(Msg::WriteHello)
+                .send_msg(Msg::WriteName("World".into()))
+                .perform_cmd(write_exclamation_marks_after_delay())
+                .perform_cmd(write_emoticon_after_delay("🙂".into()));
         }
-        Msg::ChangeColor => {
-            model.fill_color = if model.fill_color == Color::A {
-                Color::B
-            } else {
-                Color::A
-            };
-        }
+        Msg::WriteHello => model.title.push_str("Hello "),
+        Msg::WriteName(name) => model.title.push_str(&name),
+        Msg::WriteExclamationMarks => model.title.push_str("!!! "),
+        Msg::WriteEmoticon(emoticon) => model.title.push_str(&emoticon),
     }
 }
 
-fn draw(canvas: &ElRef<HtmlCanvasElement>, fill_color: Color) {
-    let canvas = canvas.get().expect("get canvas element");
-    let ctx = seed::canvas_context_2d(&canvas);
+async fn write_exclamation_marks_after_delay() -> Msg {
+    TimeoutFuture::new(1_000).await;
+    Msg::WriteExclamationMarks
+}
 
-    ctx.rect(0., 0., 200., 100.);
-    ctx.set_fill_style(&JsValue::from_str(fill_color.as_str()));
-    ctx.fill();
-
-    ctx.move_to(0., 0.);
-    ctx.line_to(200., 100.);
-    ctx.stroke();
+async fn write_emoticon_after_delay(emoticon: String) -> Msg {
+    TimeoutFuture::new(2_000).await;
+    Msg::WriteEmoticon(emoticon)
 }
 
 // ------ ------
@@ -92,18 +87,33 @@ fn draw(canvas: &ElRef<HtmlCanvasElement>, fill_color: Color) {
 
 fn view(model: &Model) -> impl View<Msg> {
     div![
-        style! {St::Display => "flex"},
-        canvas![
-            el_ref(&model.canvas),
-            attrs![
-                At::Width => px(200),
-                At::Height => px(100),
-            ],
-            style![
-                St::Border => "1px solid black",
-            ],
+        style![
+            St::Display => "flex",
+            St::JustifyContent => "center",
+            St::AlignItems => "center",
+            St::FontSize => vmin(5),
+            St::FontFamily => "sans-serif",
+            St::Height => vmin(50),
         ],
-        button!["Change color", ev(Ev::Click, |_| Msg::ChangeColor)],
+        div![
+                style![
+                    St::BackgroundColor => "lightgreen",
+                    St::Padding => vmin(3),
+                    St::BorderRadius => vmin(3),
+                    St::Cursor => "pointer",
+                    St::BoxShadow => [vmin(0), vmin(0.5), vmin(0.5), "green".into()].join(" "),
+                ],
+                // on click, send this message
+                ev(Ev::Click, |_| Msg::Greet),
+                "Greet!"
+            ],
+        if model.greet_clicked {
+            // ENTER TABLE CREATION HERE
+            h1![model.table.headers[0]]
+        }
+        else {
+            h1!["No Data Here"]
+        }
     ]
 }
 
@@ -112,8 +122,6 @@ fn view(model: &Model) -> impl View<Msg> {
 // ------ ------
 
 #[wasm_bindgen(start)]
-pub fn render() {
-    App::builder(update, view)
-        .after_mount(after_mount)
-        .build_and_start();
+pub fn start() {
+    App::builder(update, view).build_and_start();
 }
