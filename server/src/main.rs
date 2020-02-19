@@ -30,7 +30,7 @@ fn main() -> std::io::Result<()> {
     std::env::set_var("RUST_LOG", "info");
 
     // SETTING UP LOG FILE NAME (INCOMPLETE - ADD DATE/TIME)
-    // let time = 
+    // let time =
     // let log_path = &format!("log/output.log");
     let log_path = "log/output.log";
     let file = OpenOptions::new()
@@ -59,7 +59,9 @@ fn main() -> std::io::Result<()> {
             // default logger settings
             // .wrap(Logger::default())
             // this is how you set custom logs (see actix middleware for % notation)
-            .wrap(Logger::new("server request: %a %t \"%r\" %s %b \"%{Referer}i\" \"%{User-Agent}i\" %T"))
+            .wrap(Logger::new(
+                "server request: %a %t \"%r\" %s %b \"%{Referer}i\" \"%{User-Agent}i\" %T",
+            ))
             .service(Files::new("/public", "./client/public"))
             .service(Files::new("/pkg", "./client/pkg"))
             .default_service(web::get().to(|req: HttpRequest| {
@@ -72,7 +74,6 @@ fn main() -> std::io::Result<()> {
 
     system.run()
 }
-
 
 // UNUSED DUE TO UNKNOWN SCOPE ERROR - adding this to main function solved issues
 // fn logs() {
