@@ -1,9 +1,30 @@
-//! [Web-sys docs](https://rustwasm.github.io/wasm-bindgen/api/web_sys/struct.CanvasRenderingContext2d.html)
-//! [Web-sys example](https://rustwasm.github.io/wasm-bindgen/examples/2d-canvas.html)
-//! [MDN](https://developer.mozilla.org/en-US/docs/Web/API/CanvasRenderingContext2D/drawWindow)
+// #![allow(clippy::non_ascii_literal)]
 
 use seed::{prelude::*, *};
-use web_sys::HtmlCanvasElement;
+
+#[macro_use]
+extern crate serde;
+extern crate serde_derive;
+extern crate serde_json;
+
+mod toml_parse;
+use toml_parse::*;
+
+// mod data_store;
+// use data_store::*;
+// mod build_table;
+// use build_table::*;
+
+// HOW THIS SHIT WORKS
+//  - view function = render html on screen
+//  - update function = change shit and re-render the page
+//      - orders have a few options that you can use in the update function
+//          .skip() tells it not to re-render the page this time
+//          .send_msg(Msg::ENUMOPTION) tells it to send this other message type from the enum options
+//          .perform_cmd(FUNCTIONNAME(PARAMS)) tells it to run this function
+//          there are more in the link I sent you for the orders docs
+//  - Model struct = info that you might want to render, and flags to help you decide how to render it
+//      - you might not actually need to save the table data in the model
 
 // ------ ------
 //     Model
@@ -11,99 +32,110 @@ use web_sys::HtmlCanvasElement;
 
 #[derive(Default)]
 struct Model {
-    fill_color: Color,
-    canvas: ElRef<HtmlCanvasElement>,
-}
-
-#[derive(Copy, Clone, PartialEq, Eq)]
-enum Color {
-    A,
-    B,
-}
-
-impl Color {
-    fn as_str(&self) -> &str {
-        match self {
-            Self::A => "white",
-            Self::B => "green",
-        }
-    }
-}
-
-impl Default for Color {
-    fn default() -> Self {
-        Self::A
-    }
-}
-
-// ------ ------
-//  After Mount
-// ------ ------
-
-fn after_mount(_: Url, orders: &mut impl Orders<Msg>) -> AfterMount<Model> {
-    orders.after_next_render(|_| Msg::Rendered);
-    AfterMount::default()
+    table: String,
+    index: usize,
+    index_step: usize,
+    toml_parsed: Toml,
 }
 
 // ------ ------
 //    Update
 // ------ ------
 
-#[derive(Copy, Clone)]
 enum Msg {
-    Rendered,
-    ChangeColor,
+    LoadToml,
+    Forward,
+    Back,
+    KeyDown(web_sys::KeyboardEvent)
 }
 
-fn update(msg: Msg, model: &mut Model, orders: &mut impl Orders<Msg>) {
+fn update(msg: Msg, model: &mut Model, _orders: &mut impl Orders<Msg>) {
     match msg {
-        Msg::Rendered => {
-            draw(&model.canvas, model.fill_color);
-            // We want to call `.skip` to prevent infinite loop.
-            // (Infinite loops are useful for animations.)
-            orders.after_next_render(|_| Msg::Rendered).skip();
+        Msg::LoadToml => {
+            model.index_step = 20;
+            model.index = 0;
+            let test_data = include_str!("test_data/print_universe.txt");
+            let toml_parsed: Toml = toml::from_str(&test_data).expect("parsing toml");
+            model.toml_parsed = toml_parsed;
+            model.index += model.index_step;
+            let table = draw_table(&model.toml_parsed, model.index);
+            model.table.clear();
+            model.table = table;
+            log!("LoadToml")
         }
-        Msg::ChangeColor => {
-            model.fill_color = if model.fill_color == Color::A {
-                Color::B
-            } else {
-                Color::A
-            };
+        Msg::Forward => {
+            model.index += model.index_step;
+            let table = draw_table(&model.toml_parsed, model.index);
+            model.table.clear();
+            model.table = table;
+            log!("ForwardTable");
+        }
+        Msg::Back => {
+            if model.index >= model.index_step {
+                model.index -= model.index_step;
+            }
+            let table = draw_table(&model.toml_parsed, model.index);
+            model.table.clear();
+            model.table = table;
+            log!("ForwardTable");
+        }
+        // Msg::Forward => {
+        //     model.index += model.index_step;
+        //     let table = draw_table(&model.toml_parsed, model.index);
+        //     model.table.clear();
+        //     model.table = table;
+        //     log!("ForwardTable");
+        // }
+        Msg::KeyDown(_event) => {
+            if model.index >= model.index_step {
+                model.index += model.index_step;
+            }
+            let table = draw_table(&model.toml_parsed, model.index);
+            model.table.clear();
+            model.table = table;
+            log!("ForwardTable");
         }
     }
 }
 
-fn draw(canvas: &ElRef<HtmlCanvasElement>, fill_color: Color) {
-    let canvas = canvas.get().expect("get canvas element");
-    let ctx = seed::canvas_context_2d(&canvas);
-
-    ctx.rect(0., 0., 200., 100.);
-    ctx.set_fill_style(&JsValue::from_str(fill_color.as_str()));
-    ctx.fill();
-
-    ctx.move_to(0., 0.);
-    ctx.line_to(200., 100.);
-    ctx.stroke();
+fn draw_table(toml_parsed: &Toml, index_step: usize) -> String {
+    if let Some(_ship) = &toml_parsed.Ships {
+        toml_parsed
+            .clone()
+            .Ships
+            .unwrap()
+            .sort_by_key(|a| a.owner.clone().unwrap());
+    }
+    let mut rows = "".to_string();
+    for (i, ship) in toml_parsed.Ships.as_ref().unwrap().iter().enumerate() {
+        if i <= index_step {
+            rows.push_str(&format!(
+                "<tr><td>{}</td><td>{}</td><td>{}</td></tr>",
+                &ship._id.as_ref().unwrap(),
+                &ship.owner.as_ref().unwrap(),
+                &ship.job.as_ref().unwrap()
+            ))
+        } else if i > index_step {
+            break;
+        }
+    }
+    let table = format!("<table id=\"table\"> <thead>  <tr><th>The table header</th></tr> </thead> <tbody> {} </tbody></table>",
+                rows );
+    table
 }
-
 // ------ ------
 //     View
 // ------ ------
 
 fn view(model: &Model) -> impl View<Msg> {
     div![
-        style! {St::Display => "flex"},
-        canvas![
-            el_ref(&model.canvas),
-            attrs![
-                At::Width => px(200),
-                At::Height => px(100),
-            ],
-            style![
-                St::Border => "1px solid black",
-            ],
+        input![ keyboard_ev("keydown", Msg::KeyDown)],
+        div![
+            button!["Load Data", ev(Ev::Click, |_| Msg::LoadToml)],
+            button!["Forward", ev(Ev::Click, |_| Msg::Forward)],
+            button!["Back", ev(Ev::Click, |_| Msg::Back)],
         ],
-        button!["Change color", ev(Ev::Click, |_| Msg::ChangeColor)],
+        div![Node::from_html(&model.table)] //
     ]
 }
 
@@ -112,8 +144,6 @@ fn view(model: &Model) -> impl View<Msg> {
 // ------ ------
 
 #[wasm_bindgen(start)]
-pub fn render() {
-    App::builder(update, view)
-        .after_mount(after_mount)
-        .build_and_start();
+pub fn start() {
+    App::builder(update, view).build_and_start();
 }
