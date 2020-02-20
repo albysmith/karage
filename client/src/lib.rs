@@ -1,5 +1,6 @@
 // #![allow(clippy::non_ascii_literal)]
 
+use gloo_timers::future::TimeoutFuture;
 use seed::{prelude::*, *};
 // use web_sys::MouseScrollEvent;
 #[macro_use]
