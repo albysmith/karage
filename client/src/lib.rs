@@ -30,9 +30,9 @@ Menu -> Table | Blog -> Menu
 #[derive(Default)]
 struct Model {
     table: String,
-    index: usize,
-    old_index: usize,
-    index_step: usize,
+    index: isize,
+    old_index: isize,
+    index_step: isize,
     toml_parsed: Toml,
 }
 
@@ -74,7 +74,7 @@ fn update(msg: Msg, model: &mut Model, _orders: &mut impl Orders<Msg>) {
             let table = draw_table(&model.toml_parsed, model.index, model.old_index);
             model.table.clear();
             model.table = table;
-            log!("ForwardTable");
+            log!("BackTable");
         }
         // Msg::Forward => {
         //     model.index += model.index_step;
@@ -104,12 +104,17 @@ fn increment_index(model: &mut Model, add_or_subtract: bool) {
     model.old_index = model.index;
     if add_or_subtract {
         model.index += model.index_step
-    } else if model.index >= model.index_step {
-        model.index -= model.index_step
+    } else {
+        model.index -= model.index_step;
+        model.old_index -= model.index_step + model.index_step;
+    }
+    if model.index < 0 || model.old_index < 0 {
+        model.index = 0;
+        model.old_index = model.index_step
     }
 }
 
-fn draw_table(toml_parsed: &Toml, index: usize, old_index: usize) -> String {
+fn draw_table(toml_parsed: &Toml, index: isize, old_index: isize) -> String {
     if let Some(_ship) = &toml_parsed.Ships {
         toml_parsed
             .clone()
@@ -118,19 +123,29 @@ fn draw_table(toml_parsed: &Toml, index: usize, old_index: usize) -> String {
             .sort_by_key(|a| a.owner.clone().unwrap());
     }
     let mut rows = "".to_string();
+    log!(format!("old_index{}", old_index));
+    log!(format!("index{}", index));
+
     for (i, ship) in toml_parsed.Ships.as_ref().unwrap().iter().enumerate() {
-        if i >= old_index && i <= index {
+        if i as isize >= old_index && i as isize <= index {
             rows.push_str(&format!(
-                "<tr><td>{}</td><td>{}</td><td>{}</td></tr>",
+                "<tr><td>{}</td><td>{}</td><td>{}</td><td>{}</td><td>{}</td><td>{}</td><td>{}</td><td>{}</td></tr>",
                 &ship._id.as_ref().unwrap(),
                 &ship.owner.as_ref().unwrap(),
-                &ship.job.as_ref().unwrap()
+                &ship.job.as_ref().unwrap(),
+                &ship.r#macro.as_ref().unwrap(),
+                &ship.maxhull.as_ref().unwrap(),
+                &ship.maxshield.as_ref().unwrap(),
+                &ship.value.as_ref().unwrap(),
+                &ship.primarypurpose.as_ref().unwrap()
             ))
-        } else if i > index {
+        } else if i as isize > index {
             break;
         }
     }
-    let table = format!("<table id=\"table\" class=\"littletables\"> <thead>  <tr><th>The table header</th></tr> </thead> <tbody> {} </tbody></table>",
+    let table = format!("<table id=\"table\" class=\"littletables\"> <thead>  <tr>
+    <th>ID</th><th>Owner</th><th>Job</th><th>Macro</th><th>Max Hull</th><th>Max Shield</th><th>Value</th><th>Purpose</th>
+    </tr> </thead> <tbody> {} </tbody></table>",
                 rows );
     table
 }
@@ -140,11 +155,23 @@ fn draw_table(toml_parsed: &Toml, index: usize, old_index: usize) -> String {
 
 fn view(model: &Model) -> impl View<Msg> {
     div![
-        input![keyboard_ev("keydown", Msg::KeyDown)],
         div![
-            button!["Load Data", ev(Ev::Click, |_| Msg::LoadToml)],
-            button!["Forward", ev(Ev::Click, |_| Msg::Forward)],
-            button!["Back", ev(Ev::Click, |_| Msg::Back)],
+            button![
+                class! {"table_buttons"},
+                "Load Data",
+                ev(Ev::Click, |_| Msg::LoadToml)
+            ],
+            button![
+                class! {"table_buttons"},
+                "Forward",
+                ev(Ev::Click, |_| Msg::Forward)
+            ],
+            button![
+                class! {"table_buttons"},
+                "Back",
+                ev(Ev::Click, |_| Msg::Back)
+            ],
+            input![class! {"search"}, keyboard_ev("keydown", Msg::KeyDown)],
         ],
         div![
             ev(Ev::Scroll, |_| Msg::Scroll),
