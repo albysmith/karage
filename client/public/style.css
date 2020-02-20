@@ -1,3 +1,15 @@
 .littletables {
-    border: 1px solid black;
+    /* border: 1px solid black;
+    overflow: scroll;
+    overflow-y: scroll;
+     width: 100px;
+    height: 100px; */
+    background-color: #eaeaea;
+  display: block;
+  height: 800px;
+  overflow-y: scroll;
+  scroll-behavior: smooth;
+  text-align: center;
+  width: 800px;
+
 }
